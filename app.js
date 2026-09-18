@@ -8,7 +8,7 @@ const nodes={
  '07':{x:850,y:490,name:'男寝1号',type:'dorm',note:'主要宿舍配送终点'},'08':{x:805,y:565,name:'男寝2号',type:'dorm',note:'主要宿舍配送终点'},
  '09':{x:675,y:610,name:'篮球场',type:'sport',note:'运动时段通行负载事件点'},'10':{x:610,y:670,name:'南侧公园',type:'park',note:'夜间慢行负载上升'},
  '11':{x:520,y:710,name:'南园',type:'park',note:'宿舍区慢行节点'},'12':{x:665,y:715,name:'男寝3号',type:'dorm',note:'主要宿舍配送终点'},
- '13':{x:720,y:445,name:'超市',type:'market',note:'即时生活物资订单来源'},'14':{x:665,y:360,name:'教学楼14',type:'teach',model:'银白错位教学楼',note:'专业教学楼；课间通行负载上升'},
+ '13':{x:720,y:445,name:'超市',type:'market',model:'木结构玻璃市场大厅',note:'即时生活物资订单来源'},'14':{x:665,y:360,name:'教学楼14',type:'teach',model:'银白错位教学楼',note:'专业教学楼；课间通行负载上升'},
  '15':{x:705,y:305,name:'教学楼15',type:'teach',model:'银白错位教学楼',note:'专业教学楼；课间通行负载上升'},'16':{x:820,y:275,name:'教学楼16',type:'teach',model:'木构弧形教学楼',note:'专业教学楼；课间通行负载上升'},
  '17':{x:750,y:235,name:'教学楼17',type:'teach',model:'木构弧形教学楼',note:'专业教学楼；课间通行负载上升'},'18':{x:620,y:205,name:'教学楼18',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},
  '19':{x:520,y:175,name:'教学楼19',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},'20':{x:595,y:275,name:'教学楼20',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},
@@ -22,10 +22,11 @@ const buildingSprites={
  silver:Object.assign(new Image(),{src:'assets/buildings/teaching-silver.png'}),
  fins:Object.assign(new Image(),{src:'assets/buildings/information-fins.png'}),
  lab:Object.assign(new Image(),{src:'assets/buildings/engineering-lab.png'}),
- timber:Object.assign(new Image(),{src:'assets/buildings/teaching-timber.png'})
+ timber:Object.assign(new Image(),{src:'assets/buildings/teaching-timber.png'}),
+ market:Object.assign(new Image(),{src:'assets/buildings/market-timber-glass.png'})
 };
-const spriteByNode={14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab',24:'fins'};
-const spriteWidths={silver:74,timber:78,lab:86,fins:72};
+const spriteByNode={13:'market',14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab',24:'fins'};
+const spriteWidths={market:88,silver:74,timber:78,lab:86,fins:72};
 const graph={}; Object.keys(nodes).forEach(k=>graph[k]=[]);
 edgePairs.forEach(([a,b])=>{const d=Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y);graph[a].push({to:b,d});graph[b].push({to:a,d})});
 let seed=24681357;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
