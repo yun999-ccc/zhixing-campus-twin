@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173f67">
+  <title>智行校园 - 配送调度数字孪生</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    :root { --ink:#173f67; --navy:#102d4a; --sky:#eaf6ff; --mint:#64d9ca; --gold:#f7c84b; --coral:#ff746f; --paper:#f8fbff; --muted:#5e7185; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font-family:ui-rounded, "PingFang SC", "Microsoft YaHei", sans-serif; background:linear-gradient(135deg,#e7f6ff 0%,#f7fbff 55%,#ecfff5 100%); min-height:100vh; }
+    header { padding:24px clamp(18px,4vw,56px) 16px; display:flex; justify-content:space-between; align-items:center; gap:20px; }
+    .brand { display:flex; align-items:center; gap:12px; }.mark{ width:45px;height:45px;border-radius:15px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:24px;box-shadow:0 10px 20px #173f6730;}
+    h1 { font-size:clamp(1.25rem,2.4vw,1.8rem);margin:0;letter-spacing:.02em; } .sub {margin:4px 0 0;color:var(--muted);font-size:.86rem;}
+    .chip { font-size:.82rem; font-weight:700; padding:9px 13px; background:#fff; border:1px solid #d7e6f2; border-radius:999px; white-space:nowrap; }
+    main { padding:0 clamp(18px,4vw,56px) 36px; display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.8fr);gap:22px; }
+    .card { background:#ffffffd9; border:1px solid #dcebf5; border-radius:24px; box-shadow:0 14px 40px #3d6a8c14; }
+    .game { padding:16px; min-width:0; }.gamebar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 3px 14px}.gamebar strong{font-size:1rem}.hint{font-size:.8rem;color:var(--muted)}
+    canvas{display:block;width:100%;height:auto;border-radius:18px;background:#bcecff;outline:1px solid #cae6f2;cursor:crosshair;}
+    .side{display:grid;gap:16px;align-content:start}.panel{padding:18px}.panel h2{font-size:1rem;margin:0 0 12px}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{padding:12px;border-radius:16px;background:var(--paper)}.metric b{display:block;font-size:1.22rem;margin-top:4px}.metric span{font-size:.74rem;color:var(--muted)}
+    .timeline { display:grid;grid-template-columns:repeat(5,1fr); gap:6px; }.time { border:0;border-radius:12px;padding:10px 5px;background:#eef6fb;color:var(--ink);font-weight:700;cursor:pointer;font-size:.78rem;}.time.active{background:var(--ink);color:#fff}.time small{display:block;font-size:.65rem;opacity:.75;margin-top:3px;font-weight:500}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.action{border:0;border-radius:14px;padding:12px 10px;background:#eef6fb;color:var(--ink);font:inherit;font-size:.84rem;font-weight:700;cursor:pointer;text-align:left;transition:.2s}.action:hover,.action.active{background:#d7f6ee;transform:translateY(-1px)}.action.danger.active{background:#ffe3e2;color:#ae3934}.action i{font-style:normal;font-size:1.1rem;margin-right:5px}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.75rem;color:var(--muted)}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}.log{margin:0;padding:0;list-style:none;display:grid;gap:8px;max-height:135px;overflow:auto}.log li{font-size:.81rem;padding-left:11px;border-left:3px solid var(--mint);color:#38566f}.log li.warn{border-color:var(--coral)}
+    .bottom{grid-column:1/-1;display:grid;grid-template-columns:1.15fr 1fr;gap:22px;padding:21px 24px}.bottom h2{margin:0 0 8px;font-size:1rem}.bottom p{margin:0;color:var(--muted);line-height:1.65;font-size:.88rem}.rule{display:flex;align-items:center;gap:10px;margin-top:11px;font-size:.84rem}.badge{font-size:.72rem;font-weight:800;padding:4px 8px;border-radius:8px;background:#dff8f3;color:#147b70;white-space:nowrap}
+    @media(max-width:900px){main{grid-template-columns:1fr}.bottom{grid-column:auto;grid-template-columns:1fr}.game{order:0}.side{order:1}header{padding-top:18px}.chip{display:none}}
+  </style>
+</head>
+<body>
+  <header><div class="brand"><div class="mark">↗</div><div><h1>智行校园</h1><p class="sub">新能源配送车与无人车协同调度数字孪生</p></div></div><div class="chip" id="status">运行中 · 午间高峰</div></header>
+  <main>
+    <section class="card game"><div class="gamebar"><strong>星澜校园 · 实时配送地图</strong><span class="hint">点击地图空白处派发紧急订单</span></div><canvas id="map" width="920" height="570" aria-label="校园配送仿真地图"></canvas></section>
+    <aside class="side">
+      <section class="card panel"><h2>运营指标</h2><div class="metric-grid"><div class="metric"><span>准时率</span><b id="ontime">96.8%</b></div><div class="metric"><span>当前订单</span><b id="orders">18</b></div><div class="metric"><span>累计碳排</span><b id="carbon">12.4 kg</b></div><div class="metric"><span>车辆利用率</span><b id="usage">78%</b></div></div></section>
+      <section class="card panel"><h2>时段与需求</h2><div class="timeline" id="timeline"><button class="time" data-period="morning">早晨<small>低</small></button><button class="time" data-period="class">上课<small>低</small></button><button class="time active" data-period="lunch">午间<small>高</small></button><button class="time" data-period="evening">18–19<small>收尾</small></button><button class="time" data-period="night">夜间<small>停运</small></button></div></section>
+      <section class="card panel"><h2>突发事件</h2><div class="actions"><button class="action danger" data-event="closure"><i>⛔</i>道路封闭</button><button class="action" data-event="surge"><i>⚡</i>订单暴增</button><button class="action danger" data-event="charger"><i>⌁</i>充电故障</button><button class="action danger" data-event="attack"><i>◈</i>订单篡改</button></div></section>
+      <section class="card panel"><h2>调度日志</h2><ul class="log" id="log"><li>无人车 U-02 正在前往男寝 2 号</li><li>电动配送车 E-01 完成快递站装载</li><li>系统根据午间人流降低教学区道路权重</li></ul></section>
+    </aside>
+    <section class="card bottom"><div><h2>作品说明</h2><p>以校园快递站、食堂、超市和宿舍区为核心，将人流高峰、车辆续航、充电排队、道路拥堵与信息安全事件转化为可操作的调度模型。界面使用匿名化的“星澜校园”空间结构。</p></div><div><h2>当前规则</h2><div class="rule"><span class="badge">18:00</span>学生停止普通快递取件</div><div class="rule"><span class="badge">19:00</span>配送车辆结束当日运营</div><div class="rule"><span class="badge">协同</span>短距离优先无人配送车，批量订单优先新能源配送车</div></div></section>
+  </main>
+<script>
+const c=document.getElementById('map'),ctx=c.getContext('2d');
+const nodes={ hub:[692,293,'快递站 / 食堂'], market:[570,355,'超市'], f:[780,218,'女寝 1'], m1:[745,354,'男寝 1'],m2:[760,410,'男寝 2'],m3:[520,500,'男寝 3'],teach:[530,220,'教学楼组团'],info:[388,185,'信息楼'],admin:[300,410,'行政楼'] };
+let period='lunch',events=new Set(),tick=0,urgent=[];
+const palette={hub:'#f7c84b',market:'#ff9a77',dorm:'#7666d8',teach:'#4ba9e8',info:'#45c3ac',admin:'#7f9bb7'};
+const log=document.getElementById('log');
+function addLog(s,warn=false){const li=document.createElement('li');li.textContent=s;if(warn)li.className='warn';log.prepend(li);while(log.children.length>6)log.lastChild.remove();}
+function road(a,b,blocked=false){ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.lineWidth=blocked?16:12;ctx.lineCap='round';ctx.strokeStyle=blocked?'#ff746f':'#e1ebee';ctx.stroke();ctx.lineWidth=2;ctx.strokeStyle=blocked?'#b4413c':'#c1d5dc';ctx.stroke();if(blocked){ctx.fillStyle='#fff';ctx.font='18px sans-serif';ctx.fillText('×', (a[0]+b[0])/2-4,(a[1]+b[1])/2+6)}}
+function building(key,type,w=68,h=43){const [x,y,label]=nodes[key];ctx.save();ctx.translate(x,y);ctx.fillStyle='rgba(17,62,89,.16)';ctx.fillRect(-w/2+7,-h/2+8,w,h);ctx.fillStyle=palette[type];ctx.beginPath();ctx.roundRect(-w/2,-h/2,w,h,8);ctx.fill();ctx.fillStyle='rgba(255,255,255,.75)';for(let i=-w/2+11;i<w/2-6;i+=13)ctx.fillRect(i,-h/2+10,7,7);ctx.fillStyle='#143a59';ctx.font='700 13px ui-rounded, sans-serif';ctx.textAlign='center';ctx.fillText(label,0,h/2+19);ctx.restore()}
+function car(x,y,color,label,dx=0,dy=0){ctx.save();ctx.translate(x+dx,y+dy);ctx.fillStyle='rgba(17,62,89,.2)';ctx.beginPath();ctx.ellipse(0,12,16,5,0,0,7);ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-15,-9,30,18,7);ctx.fill();ctx.fillStyle='#d9f7ff';ctx.fillRect(-7,-5,14,7);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-9,9,4,0,7);ctx.arc(9,9,4,0,7);ctx.fill();ctx.fillStyle='#173f67';ctx.font='700 10px sans-serif';ctx.textAlign='center';ctx.fillText(label,0,-15);ctx.restore()}
+function draw(){tick++;ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#aee6d5';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#91d8c4';ctx.beginPath();ctx.arc(100,110,135,0,7);ctx.arc(855,505,155,0,7);ctx.fill();
+  // lawns
+  ctx.fillStyle='#c9ef9d';[[340,130,110,85],[590,95,180,58],[180,305,140,95],[370,470,115,55]].forEach(r=>{ctx.beginPath();ctx.roundRect(...r,20);ctx.fill()});
+  road(nodes.hub,nodes.market);road(nodes.market,nodes.m1);road(nodes.m1,nodes.m2,events.has('closure'));road(nodes.market,nodes.m3);road(nodes.market,nodes.teach);road(nodes.teach,nodes.info);road(nodes.admin,nodes.m3);road(nodes.hub,nodes.f);road(nodes.f,nodes.m1);
+  building('hub','hub',82,48);building('market','market',55,38);building('f','dorm');building('m1','dorm');building('m2','dorm');building('m3','dorm');building('teach','teach',120,54);building('info','info',75,44);building('admin','admin',78,46);
+  // charging
+  ctx.fillStyle=events.has('charger')?'#ff746f':'#64d9ca';ctx.beginPath();ctx.roundRect(650,380,27,35,7);ctx.fill();ctx.fillStyle='#173f67';ctx.font='700 17px sans-serif';ctx.textAlign='center';ctx.fillText(events.has('charger')?'!':'⚡',663,404);ctx.font='12px sans-serif';ctx.fillText('充电点',663,429);
+  const phase=Math.sin(tick/35)*11;car(690,315,'#f7c84b','E-01',phase,phase/3);car(721,365,'#64d9ca','U-02',-phase/2,phase);car(575,335,'#64d9ca','U-03',phase/3,-phase/2);
+  urgent.forEach(([x,y])=>{ctx.fillStyle='#ff746f';ctx.beginPath();ctx.arc(x,y,11+Math.sin(tick/8)*2,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.fillText('!',x,y+5)});
+  if(events.has('attack')){ctx.fillStyle='#ffe1df';ctx.beginPath();ctx.roundRect(355,42,210,36,18);ctx.fill();ctx.fillStyle='#ae3934';ctx.font='700 14px sans-serif';ctx.fillText('安全校验：已拦截异常订单',460,65)}
+  requestAnimationFrame(draw);
+}
+function recalc(){let high=period==='lunch'||period==='evening', late=period==='night';let order=high?18:period==='class'?7:period==='morning'?5:late?0:10;let rate=high?96.8:98.4;let carbon=high?12.4:8.1;let use=high?78:52;if(events.has('surge')){order+=12;rate-=5;use+=9}if(events.has('closure'))rate-=4;if(events.has('charger')){rate-=3;carbon+=1.8}if(events.has('attack'))rate-=2; if(late)rate=100,use=0;
+  document.getElementById('orders').textContent=order;document.getElementById('ontime').textContent=Math.max(0,rate).toFixed(1)+'%';document.getElementById('carbon').textContent=carbon.toFixed(1)+' kg';document.getElementById('usage').textContent=Math.min(100,use)+'%';document.getElementById('status').textContent=late?'今日运营结束 · 19:00':'运行中 · '+({morning:'早晨低峰',class:'上课低峰',lunch:'午间高峰',evening:'收尾配送'}[period]||'');}
+document.querySelectorAll('.time').forEach(b=>b.onclick=()=>{period=b.dataset.period;document.querySelectorAll('.time').forEach(x=>x.classList.toggle('active',x===b));recalc();addLog('已切换至 '+b.textContent.replace(/\s+/g,' ')+' 时段模型');});
+document.querySelectorAll('.action').forEach(b=>b.onclick=()=>{const e=b.dataset.event;events.has(e)?events.delete(e):events.add(e);b.classList.toggle('active',events.has(e));if(e==='attack')b.classList.toggle('danger',true);const texts={closure:'道路封闭：男寝道路改走备用路线',surge:'订单暴增：系统增加无人车派单优先级',charger:'充电故障：E-01 进入低电量保护策略',attack:'安全拦截：异常订单已进入待复核队列'};addLog(texts[e],events.has(e));recalc();});
+c.addEventListener('click',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*c.width/r.width,y=(e.clientY-r.top)*c.height/r.height;urgent.push([x,y]);addLog('新增紧急订单，系统开始匹配最近可用车辆');recalc();setTimeout(()=>{urgent.shift();addLog('紧急订单已完成调度');},3600)});recalc();draw();
+</script>
+</body></html>
