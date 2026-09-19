@@ -14,19 +14,25 @@
     <div class="brand"><span class="brand-mark">↗</span><div><h1>智行校园</h1><p>新能源厢式配送车与低速无人配送车协同调度</p></div></div>
     <div class="clock-block"><span id="dayType">工作日</span><strong id="simClock">16:15</strong><span id="periodLabel">上课低负载</span></div>
     <div class="top-actions">
+      <button id="judgeModeBtn" class="judge-action">评委体验</button>
       <button id="playBtn" class="primary">▶ 开始</button>
-      <select id="speedSelect" aria-label="仿真速度"><option value="1">1×</option><option value="4" selected>4×</option><option value="12">12×</option></select>
+      <select id="speedSelect" aria-label="仿真速度"><option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option><option value="12">12×</option></select>
       <button id="resetBtn">重置</button><button id="settleBtn">结算本局</button>
     </div>
   </header>
   <main class="workspace">
+    <section id="judgeGuide" class="judge-guide" aria-live="polite">
+      <div class="judge-copy"><strong>5分钟评委体验</strong><span id="judgeGuideText">一键载入标准场景，自动完成调度、绕行、安全拦截和结果结算。</span></div>
+      <div class="judge-steps" aria-label="演示步骤"><span data-demo-step="1">协同派单</span><span data-demo-step="2">道路绕行</span><span data-demo-step="3">安全拦截</span><span data-demo-step="4">结果结算</span></div>
+      <button id="stopJudgeMode" hidden>退出演示</button>
+    </section>
     <section class="map-card card">
-      <div class="map-head"><div><h2>星澜校园实时孪生地图</h2><p id="mapHelp">点击地点查看详情；滚轮缩放，拖动地图 · 原创2.5D建筑、车辆、地形与水岸场景模型</p></div><div class="legend"><span><i class="van-dot"></i>新能源配送车</span><span><i class="bot-dot"></i>无人配送车</span><span><i class="order-dot"></i>待配送订单</span></div></div>
+      <div class="map-head"><div><h2>星澜校园实时孪生地图</h2><p id="mapHelp">点击地点查看详情；滚轮缩放，拖动地图。团队自建并使用生成式工具辅助设计2.5D视觉模型。</p></div><div class="legend"><span><i class="van-dot"></i>新能源配送车</span><span><i class="bot-dot"></i>无人配送车</span><span><i class="order-dot"></i>待配送订单</span></div></div>
       <div class="canvas-wrap"><canvas id="map" width="1200" height="760" aria-label="完整校园配送数字孪生地图"></canvas><div class="map-tip" id="mapTip">06 快递站 / 食堂</div></div>
       <div class="layerbar" aria-label="地图图层"><strong>图层</strong><label><input type="checkbox" data-layer="labels" checked>地点编号</label><label><input type="checkbox" data-layer="mobility">校园通行负载</label><label><input type="checkbox" data-layer="orders" checked>订单热力</label><label><input type="checkbox" data-layer="traffic" checked>道路拥堵</label><label><input type="checkbox" data-layer="security" checked>安全告警</label><button id="fitMap">适配全图</button></div>
     </section>
     <aside class="control-column">
-      <section class="metrics card"><div class="metric score"><span>综合得分</span><strong id="score">1,000</strong></div><div class="metric"><span>准时率</span><strong id="ontime">100%</strong></div><div class="metric"><span>待配送</span><strong id="pending">0</strong></div><div class="metric"><span>累计能耗</span><strong id="energy">0.00 kWh</strong></div><div class="metric"><span>碳排放</span><strong id="carbon">0.00 kg</strong></div><div class="metric"><span>空驶率</span><strong id="emptyRate">0%</strong></div></section>
+      <section class="metrics card"><div class="metric score" title="运行后按完成订单、超时、能耗、待派订单及安全处置计算"><span>综合得分</span><strong id="score">待运行</strong></div><div class="metric" title="已准时完成订单数除以已完成与已逾期订单总数"><span>准时率</span><strong id="ontime">待结算</strong></div><div class="metric"><span>待派 / 在途</span><strong id="pending">0 / 0</strong></div><div class="metric"><span>累计能耗</span><strong id="energy">0.00 kWh</strong></div><div class="metric"><span>碳排放</span><strong id="carbon">0.00 kg</strong></div><div class="metric"><span>空驶率</span><strong id="emptyRate">待运行</strong></div></section>
       <section class="card panel"><div class="panel-title"><h2>订单调度</h2><span id="orderCount">0 条</span></div><div class="strategy-row" role="group" aria-label="自动调度策略"><button data-strategy="nearest">就近优先</button><button data-strategy="batch">批量优先</button><button data-strategy="eco" class="active">综合优化</button></div><p class="microcopy">选择订单后点击车辆可人工派单；也可启动自动调度。</p><div id="orderList" class="order-list"></div><button id="autoDispatch" class="wide primary">启动综合优化调度</button></section>
       <section class="card panel"><div class="panel-title"><h2>车辆状态</h2><span>实时</span></div><div id="fleetList" class="fleet-list"></div></section>
       <section class="card panel"><div class="panel-title"><h2>突发事件</h2><span id="eventState">正常</span></div><div class="event-grid"><button data-event="closure">⛔ 道路封闭</button><button data-event="flood">🌧 水岸积水</button><button data-event="surge">⚡ 订单暴增</button><button data-event="charger">🔌 充电故障</button><button data-event="attack">◈ 订单篡改</button></div></section>
@@ -36,9 +42,13 @@
       <article class="card panel compare-card"><div class="panel-title"><h2>策略仿真对照</h2><button id="refreshCompare">重新测算</button></div><div id="compareTable" class="compare-table"></div><p class="source-note">结果由当前订单、道路距离、拥堵、载重及车辆能耗模型计算；碳排按可替换仿真参数 0.5703 kgCO₂/kWh 换算。</p></article>
       <article class="card panel security-card"><div class="panel-title"><h2>可信订单与安全审计</h2><span id="securityStatus">无异常</span></div><div id="securityFlow" class="security-flow"><span>订单接入</span><b>→</b><span>规则检测</span><b>→</b><span>风险评分</span><b>→</b><span>可信派单</span></div><div id="securityDetail" class="security-detail">系统校验订单时间、目的地、签名与历史行为。异常订单不会直接进入车辆调度。</div><button id="reviewAttack" class="wide" disabled>复核并恢复可信订单</button></article>
       <article class="card panel log-card"><div class="panel-title"><h2>调度与模型日志</h2><button id="clearLog">清空</button></div><ul id="log" class="log"></ul></article>
+      <article class="card panel model-card"><div class="panel-title"><h2>模型、算法与评分口径</h2><span>可追溯</span></div><div class="model-flow"><div><strong>路网建模</strong><span>25个地点构成加权无向图，道路封闭后使用Dijkstra重新寻路。</span></div><div><strong>调度目标</strong><span>兼顾取货距离、行驶能耗、载重约束、车型适配和订单时限。</span></div><div><strong>能耗模型</strong><span>能耗 = 里程 × 车型能耗率 × 载荷修正 × 道路负载。</span></div><div><strong>评价口径</strong><span>准时率纳入已完成和已逾期订单；没有有效结果时不显示虚假100%。</span></div></div><details><summary>查看综合得分公式</summary><p>基础分1000 + 完成订单×65 - 超时订单×70 - 待派订单×12 - 能耗×16 - 未处置安全风险×120。分数仅在仿真产生有效活动后显示。</p></details></article>
+      <article class="card panel evidence-card"><div class="panel-title"><h2>参数来源与证据边界</h2><span id="modelLoadStatus">模型载入中</span></div><div class="evidence-list"><div><b>现场观察</b><span>上下课、快递站18:00关闭、车辆19:00停运、食堂20:00关闭。</span></div><div><b>规则建模</b><span>通行负载只改变道路成本，不宣称为真实人数统计。</span></div><div><b>仿真参数</b><span>地图比例0.002 km/像素；厢式车0.22、无人车0.052 kWh/km，可在后续实测中标定。</span></div><div><b>碳排参数</b><span>0.5703 kgCO₂/kWh为可替换演示参数，不作为本校实测结论。</span></div><div><b>视觉素材</b><span>团队完成场景编排、程序化集成与二次设计，部分模型使用生成式工具辅助。</span></div></div></article>
+      <article class="card panel experiment-card"><div class="experiment-head"><div><h2>三情景敏感性测算</h2><p>使用同一订单快照，比较常态、取件高峰和道路封闭下三种策略。结果可导出用于答辩复核。</p></div><div class="experiment-actions"><button id="runExperiments" class="primary">运行三情景测算</button><button id="exportExperiments" disabled>导出CSV</button></div></div><div id="experimentSummary" class="experiment-summary"><div class="empty">尚未测算。点击按钮生成可复核的策略对照记录。</div></div><p class="source-note">这是模型敏感性测试，不等同于校园实车测试；答辩时应明确区分仿真结果与现实验证。</p></article>
     </section>
   </main>
   <dialog id="resultDialog"><div class="result-head"><span>本局结算</span><button id="closeResult" aria-label="关闭">×</button></div><h2 id="resultTitle">调度表现</h2><div id="resultScore" class="result-score">0</div><div id="resultBreakdown" class="result-breakdown"></div><p>指标来自本局实际订单、车辆路径、电量和异常处置记录。</p></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>
 </html>
