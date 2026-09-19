@@ -3,7 +3,7 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#map'),ctx=canvas.getContext('2d');
 const nodes={
  '01':{x:535,y:330,name:'主楼',type:'teach',model:'大型中庭主教学楼',note:'校园核心教学与通行节点'},'02':{x:585,y:470,name:'中央公园',type:'park',model:'环形水景慢行公园',note:'慢行通道与车辆减速区'},
- '04':{x:425,y:555,name:'体育馆',type:'sport',note:'活动时段通行负载上升'},'05R':{x:255,y:610,name:'行政楼',type:'admin',model:'石材玻璃行政中心',note:'文件与行政物资配送点'},
+ '04':{x:425,y:555,name:'体育馆',type:'sport',model:'银顶砖石综合体育馆',note:'活动时段通行负载上升'},'05R':{x:255,y:610,name:'行政楼',type:'admin',model:'石材玻璃行政中心',note:'文件与行政物资配送点'},
  '05B':{x:940,y:315,name:'女寝1号',type:'dorm',model:'蓝灰庭院女寝1号',note:'主要宿舍配送终点'},'06':{x:855,y:405,name:'食堂 / 快递站',type:'hub',note:'物流始发站；18:00停止学生取件'},
  '07':{x:850,y:490,name:'男寝1号',type:'dorm',model:'红砖线性男寝1号',note:'主要宿舍配送终点'},'08':{x:805,y:565,name:'男寝2号',type:'dorm',model:'L形庭院男寝2号',note:'主要宿舍配送终点'},
  '09':{x:675,y:610,name:'篮球场',type:'sport',model:'蓝色弧顶半室内篮球馆',note:'运动时段通行负载事件点'},'10':{x:600,y:690,name:'南侧公园',type:'park',model:'生态雨水花园',note:'夜间慢行负载上升'},
@@ -30,6 +30,7 @@ const buildingSprites={
  maleDorm3:Object.assign(new Image(),{src:'assets/buildings/dorm-male-3.png'}),
  timber:Object.assign(new Image(),{src:'assets/buildings/teaching-timber.png'}),
  market:Object.assign(new Image(),{src:'assets/buildings/market-timber-glass.png'}),
+ gym:Object.assign(new Image(),{src:'assets/buildings/campus-gymnasium.png'}),
  basketball:Object.assign(new Image(),{src:'assets/buildings/basketball-pavilion.png'}),
  football:Object.assign(new Image(),{src:'assets/buildings/football-mini-stadium.png'}),
  volleyball:Object.assign(new Image(),{src:'assets/buildings/volleyball-pavilion.png'}),
@@ -38,8 +39,8 @@ const buildingSprites={
  rainPark:Object.assign(new Image(),{src:'assets/buildings/park-south-rain.png'}),
  pocketPark:Object.assign(new Image(),{src:'assets/buildings/park-south-pocket.png'})
 };
-const spriteByNode={'01':'main','02':'centralPark','05R':'admin','05B':'femaleDorm','07':'maleDorm1','08':'maleDorm2','09':'basketball','10':'rainPark','11':'pocketPark','12':'maleDorm3',13:'market',14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab','22':'northPark','23':'football',24:'fins','25':'volleyball'};
-const spriteWidths={main:112,admin:86,femaleDorm:82,maleDorm1:78,maleDorm2:76,maleDorm3:80,market:88,silver:74,timber:78,lab:86,fins:72,basketball:112,football:150,volleyball:108,centralPark:88,northPark:70,rainPark:66,pocketPark:68};
+const spriteByNode={'01':'main','02':'centralPark','04':'gym','05R':'admin','05B':'femaleDorm','07':'maleDorm1','08':'maleDorm2','09':'basketball','10':'rainPark','11':'pocketPark','12':'maleDorm3',13:'market',14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab','22':'northPark','23':'football',24:'fins','25':'volleyball'};
+const spriteWidths={main:112,admin:86,femaleDorm:82,maleDorm1:78,maleDorm2:76,maleDorm3:80,market:88,silver:74,timber:78,lab:86,fins:72,gym:112,basketball:112,football:150,volleyball:108,centralPark:88,northPark:70,rainPark:66,pocketPark:68};
 const graph={}; Object.keys(nodes).forEach(k=>graph[k]=[]);
 edgePairs.forEach(([a,b])=>{const d=Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y);graph[a].push({to:b,d});graph[b].push({to:a,d})});
 let seed=24681357;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
