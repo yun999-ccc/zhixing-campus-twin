@@ -2,17 +2,17 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const canvas=$('#map'),ctx=canvas.getContext('2d');
 const nodes={
- '01':{x:535,y:330,name:'主楼',type:'admin',note:'校园核心通行节点'},'02':{x:585,y:470,name:'中央公园',type:'park',note:'慢行通道与车辆减速区'},
+ '01':{x:535,y:330,name:'主楼',type:'admin',note:'校园核心通行节点'},'02':{x:585,y:470,name:'中央公园',type:'park',model:'环形水景慢行公园',note:'慢行通道与车辆减速区'},
  '04':{x:425,y:555,name:'体育馆',type:'sport',note:'活动时段通行负载上升'},'05R':{x:255,y:610,name:'行政楼',type:'admin',note:'文件与行政物资配送点'},
  '05B':{x:940,y:315,name:'女寝1号',type:'dorm',note:'主要宿舍配送终点'},'06':{x:855,y:405,name:'食堂 / 快递站',type:'hub',note:'物流始发站；18:00停止学生取件'},
  '07':{x:850,y:490,name:'男寝1号',type:'dorm',note:'主要宿舍配送终点'},'08':{x:805,y:565,name:'男寝2号',type:'dorm',note:'主要宿舍配送终点'},
- '09':{x:675,y:610,name:'篮球场',type:'sport',model:'蓝色弧顶半室内篮球馆',note:'运动时段通行负载事件点'},'10':{x:610,y:670,name:'南侧公园',type:'park',note:'夜间慢行负载上升'},
- '11':{x:520,y:710,name:'南园',type:'park',note:'宿舍区慢行节点'},'12':{x:665,y:715,name:'男寝3号',type:'dorm',note:'主要宿舍配送终点'},
+ '09':{x:675,y:610,name:'篮球场',type:'sport',model:'蓝色弧顶半室内篮球馆',note:'运动时段通行负载事件点'},'10':{x:600,y:690,name:'南侧公园',type:'park',model:'生态雨水花园',note:'夜间慢行负载上升'},
+ '11':{x:500,y:715,name:'南园',type:'park',model:'宿舍区口袋公园',note:'宿舍区慢行节点'},'12':{x:665,y:715,name:'男寝3号',type:'dorm',note:'主要宿舍配送终点'},
  '13':{x:720,y:445,name:'超市',type:'market',model:'木结构玻璃市场大厅',note:'即时生活物资订单来源'},'14':{x:665,y:360,name:'教学楼14',type:'teach',model:'银白错位教学楼',note:'专业教学楼；课间通行负载上升'},
  '15':{x:705,y:305,name:'教学楼15',type:'teach',model:'银白错位教学楼',note:'专业教学楼；课间通行负载上升'},'16':{x:820,y:275,name:'教学楼16',type:'teach',model:'木构弧形教学楼',note:'专业教学楼；课间通行负载上升'},
  '17':{x:750,y:235,name:'教学楼17',type:'teach',model:'木构弧形教学楼',note:'专业教学楼；课间通行负载上升'},'18':{x:620,y:205,name:'教学楼18',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},
  '19':{x:520,y:175,name:'教学楼19',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},'20':{x:595,y:275,name:'教学楼20',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},
- '21':{x:490,y:260,name:'教学楼21',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},'22':{x:400,y:355,name:'北园',type:'park',note:'教学区与体育区连接节点'},
+ '21':{x:490,y:260,name:'教学楼21',type:'teach',model:'模块化工程教学楼',note:'专业教学楼；课间通行负载上升'},'22':{x:470,y:360,name:'北园',type:'park',model:'阶梯学习花园',note:'教学区与体育区连接节点'},
  '23':{x:330,y:405,name:'足球场',type:'sport',model:'蓝白看台校园足球场',note:'大型活动通行负载事件点'},'24':{x:330,y:260,name:'信息楼',type:'info',model:'白色格栅信息中心',note:'智能调度与安全监测中心'},
  '25':{x:415,y:180,name:'排球场',type:'sport',model:'折面膜顶半室内排球馆',note:'体育活动通行节点'}
 };
@@ -26,10 +26,14 @@ const buildingSprites={
  market:Object.assign(new Image(),{src:'assets/buildings/market-timber-glass.png'}),
  basketball:Object.assign(new Image(),{src:'assets/buildings/basketball-pavilion.png'}),
  football:Object.assign(new Image(),{src:'assets/buildings/football-mini-stadium.png'}),
- volleyball:Object.assign(new Image(),{src:'assets/buildings/volleyball-pavilion.png'})
+ volleyball:Object.assign(new Image(),{src:'assets/buildings/volleyball-pavilion.png'}),
+ centralPark:Object.assign(new Image(),{src:'assets/buildings/park-central-water.png'}),
+ northPark:Object.assign(new Image(),{src:'assets/buildings/park-north-learning.png'}),
+ rainPark:Object.assign(new Image(),{src:'assets/buildings/park-south-rain.png'}),
+ pocketPark:Object.assign(new Image(),{src:'assets/buildings/park-south-pocket.png'})
 };
-const spriteByNode={'09':'basketball',13:'market',14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab','23':'football',24:'fins','25':'volleyball'};
-const spriteWidths={market:88,silver:74,timber:78,lab:86,fins:72,basketball:112,football:150,volleyball:108};
+const spriteByNode={'02':'centralPark','09':'basketball','10':'rainPark','11':'pocketPark',13:'market',14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab','22':'northPark','23':'football',24:'fins','25':'volleyball'};
+const spriteWidths={market:88,silver:74,timber:78,lab:86,fins:72,basketball:112,football:150,volleyball:108,centralPark:88,northPark:70,rainPark:66,pocketPark:68};
 const graph={}; Object.keys(nodes).forEach(k=>graph[k]=[]);
 edgePairs.forEach(([a,b])=>{const d=Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y);graph[a].push({to:b,d});graph[b].push({to:a,d})});
 let seed=24681357;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
