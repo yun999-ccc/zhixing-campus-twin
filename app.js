@@ -19,30 +19,30 @@ const nodes={
 const edgePairs=[['01','02'],['01','14'],['01','20'],['01','22'],['02','04'],['02','10'],['02','13'],['04','05R'],['04','09'],['04','10'],['05R','11'],['05B','06'],['05B','07'],['05B','16'],['06','07'],['06','13'],['06','16'],['07','08'],['07','13'],['08','09'],['08','12'],['08','13'],['09','10'],['10','11'],['11','12'],['13','14'],['14','15'],['15','17'],['15','20'],['16','17'],['17','18'],['18','19'],['18','20'],['19','21'],['19','25'],['20','21'],['21','22'],['21','24'],['22','23'],['23','24'],['24','25']];
 const colors={hub:'#f7c84b',market:'#ff9a77',dorm:'#7566d8',teach:'#4a9ee8',admin:'#7e9bb4',park:'#69c482',sport:'#ef7d72',info:'#3fc6b1'};
 const buildingSprites={
- silver:Object.assign(new Image(),{src:'assets/buildings/teaching-silver.png'}),
- fins:Object.assign(new Image(),{src:'assets/buildings/information-fins.png'}),
- lab:Object.assign(new Image(),{src:'assets/buildings/engineering-lab.png'}),
- main:Object.assign(new Image(),{src:'assets/buildings/main-teaching-large.png'}),
- admin:Object.assign(new Image(),{src:'assets/buildings/administration-center.png'}),
- femaleDorm:Object.assign(new Image(),{src:'assets/buildings/dorm-female-1.png'}),
- maleDorm1:Object.assign(new Image(),{src:'assets/buildings/dorm-male-1.png'}),
- maleDorm2:Object.assign(new Image(),{src:'assets/buildings/dorm-male-2.png'}),
- maleDorm3:Object.assign(new Image(),{src:'assets/buildings/dorm-male-3.png'}),
- timber:Object.assign(new Image(),{src:'assets/buildings/teaching-timber.png'}),
- market:Object.assign(new Image(),{src:'assets/buildings/market-timber-glass.png'}),
- gym:Object.assign(new Image(),{src:'assets/buildings/campus-gymnasium.png'}),
- cafeteria:Object.assign(new Image(),{src:'assets/buildings/campus-cafeteria-curved.png'}),
- basketball:Object.assign(new Image(),{src:'assets/buildings/basketball-pavilion.png'}),
- football:Object.assign(new Image(),{src:'assets/buildings/football-mini-stadium.png'}),
- volleyball:Object.assign(new Image(),{src:'assets/buildings/volleyball-pavilion.png'}),
- centralPark:Object.assign(new Image(),{src:'assets/buildings/park-central-water.png'}),
- northPark:Object.assign(new Image(),{src:'assets/buildings/park-north-learning.png'}),
- rainPark:Object.assign(new Image(),{src:'assets/buildings/park-south-rain.png'}),
- pocketPark:Object.assign(new Image(),{src:'assets/buildings/park-south-pocket.png'})
+ silver:Object.assign(new Image(),{src:'assets/buildings/teaching-silver.webp'}),
+ fins:Object.assign(new Image(),{src:'assets/buildings/information-fins.webp'}),
+ lab:Object.assign(new Image(),{src:'assets/buildings/engineering-lab.webp'}),
+ main:Object.assign(new Image(),{src:'assets/buildings/main-teaching-large.webp'}),
+ admin:Object.assign(new Image(),{src:'assets/buildings/administration-center.webp'}),
+ femaleDorm:Object.assign(new Image(),{src:'assets/buildings/dorm-female-1.webp'}),
+ maleDorm1:Object.assign(new Image(),{src:'assets/buildings/dorm-male-1.webp'}),
+ maleDorm2:Object.assign(new Image(),{src:'assets/buildings/dorm-male-2.webp'}),
+ maleDorm3:Object.assign(new Image(),{src:'assets/buildings/dorm-male-3.webp'}),
+ timber:Object.assign(new Image(),{src:'assets/buildings/teaching-timber.webp'}),
+ market:Object.assign(new Image(),{src:'assets/buildings/market-timber-glass.webp'}),
+ gym:Object.assign(new Image(),{src:'assets/buildings/campus-gymnasium.webp'}),
+ cafeteria:Object.assign(new Image(),{src:'assets/buildings/campus-cafeteria-curved.webp'}),
+ basketball:Object.assign(new Image(),{src:'assets/buildings/basketball-pavilion.webp'}),
+ football:Object.assign(new Image(),{src:'assets/buildings/football-mini-stadium.webp'}),
+ volleyball:Object.assign(new Image(),{src:'assets/buildings/volleyball-pavilion.webp'}),
+ centralPark:Object.assign(new Image(),{src:'assets/buildings/park-central-water.webp'}),
+ northPark:Object.assign(new Image(),{src:'assets/buildings/park-north-learning.webp'}),
+ rainPark:Object.assign(new Image(),{src:'assets/buildings/park-south-rain.webp'}),
+ pocketPark:Object.assign(new Image(),{src:'assets/buildings/park-south-pocket.webp'})
 };
 const spriteByNode={'01':'main','02':'centralPark','04':'gym','05R':'admin','05B':'femaleDorm','06':'cafeteria','07':'maleDorm1','08':'maleDorm2','09':'basketball','10':'rainPark','11':'pocketPark','12':'maleDorm3',13:'market',14:'silver',15:'silver',16:'timber',17:'timber',18:'lab',19:'lab',20:'lab',21:'lab','22':'northPark','23':'football',24:'fins','25':'volleyball'};
 const spriteWidths={main:112,admin:86,femaleDorm:82,maleDorm1:78,maleDorm2:76,maleDorm3:80,market:88,silver:74,timber:78,lab:86,fins:72,gym:112,cafeteria:116,basketball:112,football:150,volleyball:108,centralPark:88,northPark:70,rainPark:66,pocketPark:68};
-const vehicleSprite=Object.assign(new Image(),{src:'assets/vehicles/autonomous-delivery-shuttle.png'});
+const vehicleSprite=Object.assign(new Image(),{src:'assets/vehicles/autonomous-delivery-shuttle.webp'});
 const CARBON_FACTOR=.5703,MAP_KM_PER_PIXEL=.002;
 const graph={}; Object.keys(nodes).forEach(k=>graph[k]=[]);
 edgePairs.forEach(([a,b])=>{const d=Math.hypot(nodes[a].x-nodes[b].x,nodes[a].y-nodes[b].y);graph[a].push({to:b,d});graph[b].push({to:a,d})});
