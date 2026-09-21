@@ -12,3 +12,6 @@
 .metric.score span{color:#000}
 .order-id{color:#000;background:var(--soft-blue-strong)}
 .layerbar input,input[type=range]{accent-color:#7bb9dd}
+.judge-guide{gap:14px}.judge-copy{min-width:220px}.judge-steps{grid-template-columns:repeat(7,1fr);gap:5px}.judge-steps span{padding:7px 5px;font-size:.64rem}.judge-controls{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.judge-controls button{padding:6px 8px;font-size:.66rem}.experiment-card,.validation-card{grid-column:1/-1}.validation-routes{margin-top:12px;overflow:auto}.validation-pending{display:inline-block;padding:3px 7px;border-radius:999px;background:#fff2cc;color:#725500;font-weight:800}.result-conclusion{grid-column:1/-1;background:#e8f6ff!important;line-height:1.55;font-weight:700}.order-status{font-size:.63rem;padding:3px 6px;border-radius:999px;background:#e8f2f8;color:#214b63;white-space:nowrap}.status-delivered{opacity:.76}.status-delivered .order-status{background:#ddf7ee;color:#075f57}.status-assigned .order-status{background:#e7efff;color:#244c8b}
+@media(max-width:1180px){.judge-steps{min-width:620px}.judge-controls{width:100%;justify-content:flex-start}}
+@media(max-width:760px){.judge-steps{min-width:0;grid-template-columns:repeat(2,1fr)}.judge-controls{display:grid;grid-template-columns:repeat(2,1fr);margin-top:8px}.judge-controls button{width:100%}}
