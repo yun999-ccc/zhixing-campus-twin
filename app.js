@@ -162,6 +162,17 @@ function drawTerrain(now){
 }
 function roadCurve(a,b){const p=nodes[a],q=nodes[b],dx=q.x-p.x,dy=q.y-p.y,len=Math.max(1,Math.hypot(dx,dy)),sign=(a.charCodeAt(0)+b.charCodeAt(b.length-1))%2?1:-1,bend=Math.min(7,len*.045)*sign;return{x:(p.x+q.x)/2-dy/len*bend,y:(p.y+q.y)/2+dx/len*bend}}
 function traceRoad(a,b,ox=0,oy=0){const p=nodes[a],q=nodes[b],c=roadCurve(a,b);ctx.beginPath();ctx.moveTo(p.x+ox,p.y+oy);ctx.quadraticCurveTo(c.x+ox,c.y+oy,q.x+ox,q.y+oy)}
+function drawGymAccess(tone){
+ const n=nodes['04'],pos=buildingPosition('04'),img=buildingSprites.gym;
+ // 对齐体育馆素材正门台阶；占位模型则连接到其下边缘。仅绘制入口，不添加路网边。
+ const entrance=img.complete&&img.naturalWidth?{x:pos.x+18,y:pos.y-1}:{x:pos.x,y:pos.y+17};
+ const trace=(ox=0,oy=0)=>{ctx.beginPath();ctx.moveTo(n.x+ox,n.y+oy);ctx.lineTo(entrance.x+ox,entrance.y+oy)};
+ ctx.save();ctx.setLineDash([]);ctx.lineCap='round';ctx.lineJoin='round';
+ ctx.strokeStyle='rgba(47,67,66,.2)';ctx.lineWidth=18;trace(2,3);ctx.stroke();
+ ctx.strokeStyle=mixColor('#f5ead7','#c6cbca',tone.night);ctx.lineWidth=15;trace();ctx.stroke();
+ ctx.strokeStyle=mixColor('#d8d2c5','#9ba7a8',tone.night);ctx.lineWidth=10;trace();ctx.stroke();
+ ctx.restore();
+}
 function drawRoads(now,tone){
  const primary=new Set(['01|02','02|13','05B|06','06|13','04|05R','04|09','09|10','13|14']);
  edgePairs.forEach(([a,b])=>{
@@ -176,7 +187,15 @@ function drawRoads(now,tone){
   if(closed){const p=nodes[a],q=nodes[b],c=roadCurve(a,b),x=(p.x+2*c.x+q.x)/4,y=(p.y+2*c.y+q.y)/4;ctx.fillStyle='#fff';ctx.font='800 18px sans-serif';ctx.textAlign='center';ctx.fillText('×',x,y+6)}
  });
  // 每栋建筑的节点现在是道路旁服务泊位，短接驳线只用于说明入口关系。
- Object.entries(nodes).forEach(([id,n])=>{const pos=buildingPosition(id),dx=pos.x-n.x,dy=pos.y-n.y,len=Math.max(1,Math.hypot(dx,dy)),stop=Math.max(18,Math.min(len-8,(spriteWidths[spriteByNode[id]]||64)*.34)),ex=pos.x-dx/len*stop,ey=pos.y-dy/len*stop;ctx.save();ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=4;ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(ex,ey);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(75,126,142,.82)';ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(n.x,n.y,10,6,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore()})
+ Object.entries(nodes).forEach(([id,n])=>{
+  ctx.save();
+  if(id==='04')drawGymAccess(tone);
+  else{
+   const pos=buildingPosition(id),dx=pos.x-n.x,dy=pos.y-n.y,len=Math.max(1,Math.hypot(dx,dy)),stop=Math.max(18,Math.min(len-8,(spriteWidths[spriteByNode[id]]||64)*.34)),ex=pos.x-dx/len*stop,ey=pos.y-dy/len*stop;
+   ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=4;ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(n.x,n.y);ctx.lineTo(ex,ey);ctx.stroke();
+  }
+  ctx.setLineDash([]);ctx.fillStyle='rgba(75,126,142,.82)';ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(n.x,n.y,10,6,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore()
+ })
 }
 function drawLamps(now,tone){if(tone.night<.05)return;const pulse=.88+.12*Math.sin(now*2);[[520,414],[640,421],[768,405],[817,454],[742,548],[572,600],[390,497],[345,330]].forEach(([x,y])=>{const glow=ctx.createRadialGradient(x,y,1,x,y,18);glow.addColorStop(0,`rgba(255,226,135,${tone.night*pulse*.58})`);glow.addColorStop(1,'rgba(255,226,135,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fill();ctx.strokeStyle=mixColor('#496a6a','#263e49',tone.night);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,y+7);ctx.lineTo(x,y-4);ctx.stroke();ctx.fillStyle='#ffe28a';ctx.beginPath();ctx.arc(x,y-5,3,0,Math.PI*2);ctx.fill()})}
 let drawQueued=false;
@@ -207,6 +226,6 @@ $('#judgeModeBtn').onclick=startJudgeMode;$('#stopJudgeMode').onclick=stopJudgeM
 $$('[data-strategy]').forEach(b=>b.onclick=()=>{state.strategy=b.dataset.strategy;$$('[data-strategy]').forEach(x=>x.classList.toggle('active',x===b));renderPanels();renderCompare()});$$('[data-event]').forEach(b=>b.onclick=()=>triggerEvent(b.dataset.event,b));$$('[data-layer]').forEach(c=>c.onchange=()=>{state.layers[c.dataset.layer]=c.checked;requestDraw()});$('#timeSlider').oninput=e=>{$('#exactTime').value=fmtTime(+e.target.value)};$('#timeSlider').onchange=e=>{state.time=+e.target.value;pauseAfterTimeEdit()};$('#exactTime').onchange=e=>setExactTime(e.target.value);$$('[data-time]').forEach(b=>b.onclick=()=>{state.time=+b.dataset.time;pauseAfterTimeEdit()});$('#fitMap').onclick=()=>{state.view={scale:1,ox:0,oy:0};requestDraw()};
 canvas.addEventListener('wheel',e=>{e.preventDefault();state.view.scale=Math.max(.75,Math.min(1.7,state.view.scale*(e.deltaY<0?1.08:.92)));requestDraw()},{passive:false});canvas.addEventListener('pointerdown',e=>{state.drag={x:e.clientX,y:e.clientY,ox:state.view.ox,oy:state.view.oy,moved:false};canvas.setPointerCapture(e.pointerId);canvas.classList.add('dragging')});canvas.addEventListener('pointermove',e=>{if(!state.drag)return;const dx=e.clientX-state.drag.x,dy=e.clientY-state.drag.y;if(Math.hypot(dx,dy)>3)state.drag.moved=true;state.view.ox=state.drag.ox+dx*(canvas.width/canvas.clientWidth);state.view.oy=state.drag.oy+dy*(canvas.height/canvas.clientHeight);requestDraw()});canvas.addEventListener('pointerup',e=>{if(state.drag&&!state.drag.moved){const r=canvas.getBoundingClientRect(),x=((e.clientX-r.left)*canvas.width/r.width-state.view.ox)/state.view.scale,y=((e.clientY-r.top)*canvas.height/r.height-state.view.oy)/state.view.scale;let hit=null,best=54;Object.entries(nodes).forEach(([id,n])=>{const pos=buildingPosition(id),d=Math.hypot(x-pos.x,y-pos.y);if(d<best){best=d;hit=[id,n]}});if(hit){const model=hit[1].model?` · ${hit[1].model}`:'';$('#mapTip').textContent=`${hit[0]==='05R'?'05行政':hit[0]==='05B'?'05女寝':hit[0]} ${hit[1].name} · ${typeLabels[hit[1].type]}${model} · ${hit[1].note}`}}state.drag=null;canvas.classList.remove('dragging');requestDraw()});
 const modelImages=[...Object.values(buildingSprites),vehicleSprite];let loadedModels=0;$('#modelLoadStatus').textContent=`模型载入 0/${modelImages.length}`;
-Promise.all(modelImages.map(img=>new Promise(resolve=>{const done=()=>{loadedModels++;$('#modelLoadStatus').textContent=`模型载入 ${loadedModels}/${modelImages.length}`;requestDraw();resolve()};if(img.complete)done();else{img.addEventListener('load',done,{once:true});img.addEventListener('error',done,{once:true})}}))).then(()=>{$('#modelLoadStatus').textContent='模型就绪'});
+Promise.all(modelImages.map(img=>new Promise(resolve=>{const done=()=>{loadedModels++;$('#modelLoadStatus').textContent=`模型载入 ${loadedModels}/${modelImages.length}`;if(img===buildingSprites.gym)staticKey='';requestDraw();resolve()};if(img.complete)done();else{img.addEventListener('load',done,{once:true});img.addEventListener('error',done,{once:true})}}))).then(()=>{$('#modelLoadStatus').textContent='模型就绪'});
 window.__simulationQA={nodes:()=>Object.keys(nodes),snapshot:()=>({time:state.time,sessionStart:state.sessionStart,sessionEnd:state.sessionEnd,orderWave:state.orderWave,orders:state.orders.map(o=>({id:o.id,category:o.category,origin:o.origin,dest:o.dest,status:o.status,due:o.due})),vehicles:state.vehicles.map(v=>({id:v.id,type:v.type,status:v.status,currentNode:v.currentNode,battery:v.battery,path:v.path.slice(),x:v.x,y:v.y})),metrics:{...state.metrics},overdue:overdueOrders().length,rate:outcomeRate(),score:state.activityStarted?score():null}),dijkstra:(a,b)=>dijkstra(a,b),prepareSession:m=>prepareSession(m,false),reset,autoDispatch,runExperimentSuite,experiments:()=>state.experimentRows.map(x=>({...x}))};
 renderValidation();reset();requestDraw();requestAnimationFrame(tick);
