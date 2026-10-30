@@ -1,0 +1,82 @@
+/* The preview dashboard uses normal page flow, including the campus map. */
+html,
+body {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.topbar,
+.map-card {
+  position: relative;
+  top: auto;
+}
+
+.workspace {
+  display: block;
+}
+
+.judge-guide {
+  margin-bottom: 16px;
+}
+
+.control-column,
+.lower-grid {
+  margin-top: 16px;
+}
+
+@media (min-width: 761px) {
+  .control-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+
+  .control-column > .metrics {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .control-column > section:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .control-column > section:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+  }
+
+  .control-column > section:nth-child(4) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .lower-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lower-grid > * {
+    grid-column: auto;
+  }
+
+  .lower-grid > .validation-card,
+  .lower-grid > .experiment-card {
+    grid-column: 1 / -1;
+  }
+
+  /* Preserve the canvas aspect ratio and its pointer coordinate mapping. */
+  .canvas-wrap canvas {
+    width: min(100%, calc((100dvh - 250px) * 1200 / 760));
+    height: auto;
+    margin-inline: auto;
+  }
+}
+
+/* The scene occupies its own row; all operational data stays in normal flow below. */
+.campus-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:12px 0 16px}.campus-toolbar b{font-size:14px;color:#305e76}.campus-toolbar span{font-size:12px;color:#7a949f;margin-left:18px}.campus-toolbar nav{display:flex;gap:8px}.campus-toolbar button{padding:8px 13px;border:1px solid #d0e2eb;border-radius:8px;background:#f4faff;color:#4f7991;font-size:12px}.campus-toolbar button[aria-pressed=false]{background:#fff;color:#879ba5}
+#campus3d{position:relative;width:100%;height:clamp(480px,calc(100dvh - 365px),920px);border-radius:15px;overflow:hidden;background:#e1edf3;touch-action:none}#campus3d>canvas{display:block;cursor:grab;width:100%;height:100%}#campusLoading{position:absolute;inset:0;display:grid;place-items:center;background:#e9f4f9;color:#6990a3}.campus-caption{position:absolute;bottom:16px;left:20px;font-size:11px;color:#6d8c9b;pointer-events:none}#campusDetail{position:absolute;bottom:44px;left:20px;max-width:380px;padding:16px 40px 16px 17px;background:#fffffff2;border:1px solid #d9e6ed;border-radius:11px;box-shadow:0 8px 24px #476e8618}#campusDetail strong,#campusDetail span{display:block}#campusDetail strong{font-size:15px;color:#315c73}#campusDetail span{font-size:12px;line-height:1.7;margin-top:7px;color:#78909d}#campusDetail>button:not(.enter-car){position:absolute;right:9px;top:7px;border:0;background:transparent;color:#849ba8;font-size:20px}#campusDetail .enter-car{margin-top:12px;background:#e3f2fd;border:1px solid #c4dfef;border-radius:7px;color:#447791;padding:8px 14px;font-size:12px}
+@media(max-width:850px){.campus-toolbar{flex-wrap:wrap}.campus-toolbar span{display:block;margin:6px 0 0;font-size:10px}.campus-toolbar nav{width:100%}.campus-toolbar button{flex:1;padding:8px;font-size:11px}#campus3d{height:520px}.campus-caption{font-size:9px;left:12px}}
+[hidden]{display:none!important}
+
+#campus3d:fullscreen{width:100vw;height:100vh;border-radius:0}
