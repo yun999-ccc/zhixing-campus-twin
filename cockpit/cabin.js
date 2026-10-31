@@ -47,8 +47,15 @@ export function createCabin() {
     beam(new THREE.Vector3(side*1.13,1.02,-1.25),new THREE.Vector3(side*.99,2.10,-.94),.055,pale);
     beam(new THREE.Vector3(side*1.13,1.03,1.05),new THREE.Vector3(side*1.06,2.10,1.05),.06,pale);
     box(rig,side*1.06,2.04,.2,.09,.06,2.4,pale,.02);
-    const mirror=box(rig,side*1.28,1.12,-.98,.3,.2,.1,ivory,.05);
-    const face=box(mirror,0,0,.058,.25,.145,.008,new THREE.MeshBasicMaterial({color:'#d9e7ee',toneMapped:false}),.025);face.name=side<0?'left-exterior-mirror':'right-exterior-mirror';mirrorSurfaces.push(face);
+    const mirror=box(rig,side*1.30,1.28,-.98,.34,.245,.1,ivory,.05);
+    // A mirror is a single front surface. Normalize the shape UVs to show the full camera image.
+    const w=.29,h=.195,r=.025,shape=new THREE.Shape();
+    shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+    const geometry=new THREE.ShapeGeometry(shape,12),uv=geometry.attributes.uv,position=geometry.attributes.position;
+    for(let i=0;i<uv.count;i++)uv.setXY(i,position.getX(i)/w+.5,position.getY(i)/h+.5);
+    uv.needsUpdate=true;
+    const face=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:'#ffffff',toneMapped:false}));face.position.set(0,0,.065);mirror.add(face);
+    face.userData.mirrorAspect=w/h;face.name=side<0?'left-exterior-mirror':'right-exterior-mirror';mirrorSurfaces.push(face);
   }
   beam(new THREE.Vector3(-.99,2.10,-.94),new THREE.Vector3(.99,2.10,-.94),.045,ivory);
   box(rig,0,1.02,-1.15,2.22,.17,.58,pale,.06);
