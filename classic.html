@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>智行校园 · 三维校园与驾驶舱</title>
+  <link rel="icon" href="./favicon.svg">
+  <link rel="stylesheet" href="cockpit/cockpit.css">
+</head>
+<body>
+  <header class="preview-bar"><div><b>三维校园与驾驶舱</b><span>配送调度与三维校园同步 · 点击车辆进入驾驶舱</span></div><nav><a href="./">返回演示导览</a><button data-enter="E-01">驾驶 E-01</button><button data-enter="E-02">驾驶 E-02</button></nav></header>
+  <iframe id="model" src="cockpit/classic-model.html" title="保留原有功能的校园配送网页"></iframe>
+  <section id="cockpit" class="cockpit" hidden role="dialog" aria-modal="true" aria-label="左侧主驾驶位">
+    <div id="viewport" class="viewport" aria-label="鼠标拖动观察窗外校园"></div>
+    <header class="cockpit-header"><div class="live-pill"><i></i><strong id="carLabel">E-01 主驾驶位</strong><span>系统转向</span></div><div class="cockpit-actions"><button id="centerView">回正视线</button><button id="exit">退出驾驶舱 ↗</button></div></header>
+    <div class="route-hud"><span id="driveStage">前往取货</span><strong id="routeTitle">校园配送</strong><small id="nextRoad">载入路线</small></div>
+    <div class="look-hint" id="lookHint"><span class="mouse-mark">↔</span>按住鼠标拖动，可以观察左右车窗<span>双击回正</span></div>
+    <div class="screen-tabs" id="screenTabs" role="tablist" aria-label="车内中控屏"><button data-screen="map" class="active" role="tab" aria-selected="true">地图</button><button data-screen="task" role="tab" aria-selected="false">任务</button><button data-screen="data" role="tab" aria-selected="false">车辆数据</button></div>
+    <footer class="drive-dock"><div class="dock-status"><strong id="speedText">0.0 <small>km/h</small></strong><span id="dockInfo">电量 100% · 本车里程 0.00 km</span></div><div class="drive-buttons"><button id="forward"><span>↑</span>按住前进<kbd>W</kbd></button><button id="brake">Ⅱ 制动<kbd>空格</kbd></button><button id="auto">恢复自动</button></div><div class="dock-note"><span id="ownership">人工控制速度</span><small id="experienceClock">人工驾驶 1× · 自动转向</small></div></footer>
+    <div id="notice" class="notice" role="status"></div>
+    <div id="loading" class="loading">正在准备校园与驾驶舱…</div>
+  </section>
+  <script type="module" src="cockpit/main.js"></script>
+</body>
+</html>

@@ -25,11 +25,22 @@ export function createCabin() {
     const vector=b.clone().sub(a), mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r,vector.length(),10),material);
     mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),vector.normalize());rig.add(mesh);return mesh;
   }
-  // Pale headliner and door cards define real window openings rather than an image overlay.
-  box(rig,0,2.14,.45,2.42,.09,3.2,headliner,.06);
-  box(rig,0,.24,.25,2.23,.08,3.3,trim,.04);
+  // The cabin is an enclosure: the rear partition meets floor, roof and both doors.
+  box(rig,0,2.14,.49,2.42,.09,3.38,headliner,.06);
+  box(rig,0,.24,.32,2.28,.10,3.48,trim,.04);
+  const rear=box(rig,0,1.16,2.02,2.3,1.98,.12,panel,.025);rear.name='sealed-cargo-partition';
+  const inset=matte('#424d55');
+  for(const x of[-.57,.57]){
+    box(rig,x,1.25,1.946,1.00,1.42,.026,inset,.05);
+    for(const dx of[-.32,0,.32])box(rig,x+dx,1.26,1.922,.026,1.16,.024,pale,.009);
+  }
+  box(rig,0,.49,1.93,2.12,.055,.06,trim,.014);
+  box(rig,0,1.98,1.93,2.14,.035,.045,trim,.012);
   for(const side of [-1,1]){
-    box(rig,side*1.12,.69,.15,.1,.76,2.7,ivory,.025);
+    box(rig,side*1.12,.68,.36,.1,.84,3.12,ivory,.025);
+    box(rig,side*1.12,1.17,1.56,.12,1.94,1.04,ivory,.025).name='rear-side-enclosure';
+    box(rig,side*1.052,1.62,1.59,.025,.74,.62,inset,.024);
+    box(rig,side*1.05,.39,.30,.12,.07,2.95,trim,.015);
     box(rig,side*1.05,.94,.22,.12,.085,2.3,pale,.022);
     box(rig,side*1.045,.77,.3,.12,.10,.76,ivory,.025);
     box(rig,side*1.04,1.02,.3,.05,.025,.27,silver,.009);
@@ -51,10 +62,28 @@ export function createCabin() {
   box(rig,0,.55,-.1,.25,.52,1.25,ivory,.04);
   box(rig,0,.83,.22,.23,.025,.65,pale,.02);
   const cup=new THREE.Mesh(new THREE.TorusGeometry(.052,.009,8,24),silver);cup.rotation.x=Math.PI/2;cup.position.set(.02,.85,.35);rig.add(cup);
-  // A light passenger seat is visible when the driver looks to the right.
-  box(rig,.62,.53,.78,.54,.15,.62,ivory,.09);
-  const back=box(rig,.62,.98,1.02,.55,.83,.17,ivory,.09);back.rotation.x=.13;
-  box(rig,.62,1.51,1.05,.30,.22,.15,ivory,.055);
+  // Both seats sit behind the dashboard; backrests remain behind the driver's eye.
+  for(const x of[-.43,.62]){
+    const seat=new THREE.Group();seat.name=x<0?'driver-seat':'passenger-seat';rig.add(seat);
+    for(const side of[-1,1])box(seat,x+side*.19,.36,1.01,.038,.09,.61,silver,.01);
+    box(seat,x,.53,.96,.54,.17,.68,ivory,.085);
+    const back=box(seat,x,1.01,1.40,.55,.83,.17,ivory,.085);back.rotation.x=.13;
+    box(seat,x,1.57,1.48,.31,.24,.17,ivory,.055);
+    for(const side of[-1,1]){
+      box(seat,x+side*.23,.59,.96,.055,.12,.60,leather,.025);
+      const bolster=box(seat,x+side*.235,1.01,1.29,.065,.69,.08,leather,.025);bolster.rotation.x=.13;
+      box(seat,x+side*.20,.57,.96,.006,.009,.51,stitch,.002);
+      box(seat,x+side*.105,1.46,1.47,.018,.12,.018,silver,.005);
+    }
+    box(seat,x,.627,.96,.008,.006,.51,stitch,.002);
+    box(seat,x,1.08,1.30,.31,.41,.018,inset,.035).rotation.x=.13;
+  }
+  for(const side of[-1,1]){
+    box(rig,side*1.047,1.38,1.10,.037,.82,.023,leather,.008);
+    box(rig,side*1.035,1.80,1.10,.065,.075,.04,silver,.015);
+    box(rig,side<0?-.12:.31,.66,1.03,.05,.10,.06,trim,.009);
+    box(rig,side<0?-.12:.31,.713,1.03,.035,.008,.038,matte('#924f4c'),.003);
+  }
   const steering=new THREE.Group();steering.position.set(-.43,1.00,-.27);steering.rotation.x=-.12;rig.add(steering);
   const rim=new THREE.Mesh(new THREE.TorusGeometry(.232,.026,12,64),leather);steering.add(rim);
   const inner=new THREE.Mesh(new THREE.TorusGeometry(.209,.003,8,64),stitch);inner.position.z=.006;steering.add(inner);
@@ -70,12 +99,6 @@ export function createCabin() {
   // Narrow, non-emissive metal lines keep the dashboard readable in daylight.
   box(rig,0,1.09,-.77,2.09,.006,.012,silver,.002);
   for(const side of[-1,1])box(rig,side*1.038,.86,.25,.018,.008,1.45,silver,.003);
-  // Seat seams and bolsters are separate from the upholstery grain.
-  for(const side of[-1,1]){
-    box(rig,.62+side*.23,.57,.78,.055,.12,.56,leather,.02);
-    box(rig,.62+side*.21,.98,1.115,.008,.62,.003,stitch,.002);
-  }
-  box(rig,.62,.565,.78,.008,.009,.47,stitch,.002);
   const emblemCanvas=document.createElement('canvas');emblemCanvas.width=128;emblemCanvas.height=64;
   const ec=emblemCanvas.getContext('2d');ec.fillStyle='#252e35';ec.fillRect(0,0,128,64);ec.fillStyle='#c5d2dc';ec.font='500 24px sans-serif';ec.textAlign='center';ec.fillText('智行',64,42);
   const emblemTexture=new THREE.CanvasTexture(emblemCanvas);emblemTexture.colorSpace=THREE.SRGBColorSpace;

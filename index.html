@@ -2,13 +2,13 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>智行校园 · 三维校园与驾驶舱</title>
+  <title>智行校园 · 配送演示导览</title>
   <link rel="icon" href="./favicon.svg">
   <link rel="stylesheet" href="cockpit/cockpit.css">
-</head>
+<style>.preview-bar{display:none!important}#model{height:100dvh!important}</style></head>
 <body>
   <header class="preview-bar"><div><b>三维校园与驾驶舱</b><span>配送调度与三维校园同步 · 点击车辆进入驾驶舱</span></div><nav><button data-enter="E-01">驾驶 E-01</button><button data-enter="E-02">驾驶 E-02</button></nav></header>
-  <iframe id="model" src="cockpit/model.html" title="保留原有功能的校园配送网页"></iframe>
+  <iframe id="model" src="cockpit/model.html?v=20261031-guide" title="保留原有功能的校园配送网页"></iframe>
   <section id="cockpit" class="cockpit" hidden role="dialog" aria-modal="true" aria-label="左侧主驾驶位">
     <div id="viewport" class="viewport" aria-label="鼠标拖动观察窗外校园"></div>
     <header class="cockpit-header"><div class="live-pill"><i></i><strong id="carLabel">E-01 主驾驶位</strong><span>系统转向</span></div><div class="cockpit-actions"><button id="centerView">回正视线</button><button id="exit">退出驾驶舱 ↗</button></div></header>

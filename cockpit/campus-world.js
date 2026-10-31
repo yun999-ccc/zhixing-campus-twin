@@ -2,6 +2,7 @@ import * as THREE from './vendor/three.module.js';
 import {buildLandmark} from './landmarks.js';
 import {createLandscape} from './landscape.js';
 import {planSites,roadIntersections} from './site-safety.js';
+import {createVehicle} from './vehicles.js';
 
 // One world unit is one metre; the original map supplies its own metres-per-pixel.
 export function createCampus(scene, model) {
@@ -139,10 +140,15 @@ export function createCampus(scene, model) {
       // render another vehicle's body through the driver's seat at that node.
       if(snapshot.id&&(v.id===snapshot.id||Math.hypot(v.x-snapshot.x,v.y-snapshot.y)*unit<5)){if(carMeshes.has(v.id))carMeshes.get(v.id).visible=false;return;}
       let g=carMeshes.get(v.id);
-      if(!g){g=new THREE.Group();box(g,0,v.type==='van'?1.15:.65,0,v.type==='van'?1.9:1.05,v.type==='van'?1.7:1.0,v.type==='van'?3.7:1.5,mat(v.type==='van'?'#f6f2e6':'#b8d9db'));box(g,0,1.45,-1.45,1.6,.5,.1,glass);// Visible wheels and front glazing distinguish vans from delivery robots.
-      for(const side of [-1,1])for(const z of [-1.1,1.1])box(g,side*.94,.4,z,.22,.65,.65,mat('#445460'));
-      g.userData.vehicleId=v.id;root.add(g);carMeshes.set(v.id,g);}
-      const p=point(v);g.position.set(p.x,0,p.z);g.rotation.y=-v.heading-Math.PI/2;g.visible=true;
+      if(!g){g=createVehicle(v.type,v.id);root.add(g);carMeshes.set(v.id,g);}
+      const p=point(v);
+      if(g.userData.previousPosition){
+        const distance=p.distanceTo(g.userData.previousPosition);
+        // Ignore resets and teleports; wheel motion follows actual route distance.
+        if(distance<4)for(const wheel of g.userData.wheels)wheel.rotation.x-=distance/g.userData.wheelRadius;
+      }
+      g.userData.previousPosition=p.clone();
+      g.position.copy(p);g.rotation.y=-v.heading-Math.PI/2;g.visible=true;
     });
   }
   return { root, point, buildingRecords, buildingGroups, labels, carMeshes, updateCars, landscape, roadAudit, treeCount:landscape.trees.length };
